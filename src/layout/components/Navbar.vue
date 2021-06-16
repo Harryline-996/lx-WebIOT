@@ -16,6 +16,11 @@
               Home
             </el-dropdown-item>
           </router-link>
+          <router-link to="/register">
+            <el-dropdown-item>
+              Register
+            </el-dropdown-item>
+          </router-link>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>
           </el-dropdown-item>

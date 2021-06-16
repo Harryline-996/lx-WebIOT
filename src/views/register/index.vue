@@ -1,9 +1,9 @@
 <template>
-  <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+  <div class="register-container">
+    <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">登录界面</h3>
+        <h3 class="title">注册界面</h3>
       </div>
 
       <el-form-item prop="username">
@@ -12,13 +12,29 @@
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
+          v-model="registerForm.username"
+          placeholder="输入用户名"
           name="username"
           type="text"
           tabindex="1"
           auto-complete="on"
           @keyup.enter.native="usernameDone"
+        />
+      </el-form-item>
+
+      <el-form-item prop="email">
+        <span class="svg-container">
+          <svg-icon icon-class="email" />
+        </span>
+        <el-input
+          ref="email"
+          v-model="registerForm.email"
+          placeholder="输入邮箱"
+          name="email"
+          type="text"
+          tabindex="2"
+          auto-complete="on"
+          @keyup.enter.native="emailDone"
         />
       </el-form-item>
 
@@ -29,38 +45,54 @@
         <el-input
           :key="passwordType"
           ref="password"
-          v-model="loginForm.password"
+          v-model="registerForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="输入密码"
           name="password"
-          tabindex="2"
+          tabindex="3"
           auto-complete="on"
-          @keyup.enter.native="handleLogin"
+          @keyup.enter.native="passwordDone"
         />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-form-item prop="confirm">
+        <span class="svg-container">
+          <svg-icon icon-class="password" />
+        </span>
+        <el-input
+          :key="passwordType"
+          ref="confirm"
+          v-model="registerForm.confirm"
+          :type="passwordType"
+          placeholder="再输入一次密码"
+          name="confirm"
+          tabindex="4"
+          auto-complete="on"
+          @keyup.enter.native="handleRegister"
+        />
+        <span class="show-pwd" @click="showPwd">
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+        </span>
+      </el-form-item>
 
-      <router-link class="tips" to="/register">
-        注册账号
-      </router-link>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleRegister">Register</el-button>
 
     </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername, validPass } from '@/utils/validate'
+import { validUsername, validPass, validEmail } from '@/utils/validate'
 
 export default {
-  name: 'Login',
+  name: 'Register',
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('用户名不存在！'))
       } else {
         callback()
       }
@@ -72,14 +104,33 @@ export default {
         callback()
       }
     }
+    const validateEmail = (rule, value, callback) => {
+      if (!validEmail(value)) {
+        callback(new Error('邮箱格式不正确！'))
+      } else {
+        callback()
+      }
+    }
+    const validateConfirm = (rule, value, callback) => {
+      if (value !== this.registerForm.password) {
+        callback(new Error('两次密码输入不一致！'))
+      } else {
+        callback()
+      }
+    }
+
     return {
-      loginForm: {
+      registerForm: {
         username: 'admin',
-        password: 'a111111'
+        email: '',
+        password: '111111',
+        confirm: ''
       },
-      loginRules: {
+      registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        confirm: [{ required: true, trigger: 'blur', validator: validateConfirm }]
       },
       loading: false,
       passwordType: 'password',
@@ -106,13 +157,19 @@ export default {
       })
     },
     usernameDone() {
+      this.$refs.email.focus()
+    },
+    emailDone() {
       this.$refs.password.focus()
     },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+    passwordDone() {
+      this.$refs.confirm.focus()
+    },
+    handleRegister() {
+      this.$refs.registerForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
+          this.$store.dispatch('user/register', this.registerForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {
@@ -137,13 +194,13 @@ $light_gray:#fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
+  .register-container .el-input input {
     color: $cursor;
   }
 }
 
 /* reset element-ui css */
-.login-container {
+.register-container {
   .el-input {
     display: inline-block;
     height: 47px;
@@ -180,14 +237,14 @@ $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 
-.login-container {
+.register-container {
   min-height: 100%;
   width: 100%;
   background-image:url(../../assets/loginbg.jpg);
   background-color: $bg;
   overflow: hidden;
 
-  .login-form {
+  .register-form {
     position: relative;
     width: 520px;
     max-width: 100%;
@@ -200,7 +257,12 @@ $light_gray:#eee;
     font-size: 14px;
     color: #fff;
     margin-bottom: 10px;
-    float: right;
+
+    span {
+      &:first-of-type {
+        margin-right: 16px;
+      }
+    }
   }
 
   .svg-container {
