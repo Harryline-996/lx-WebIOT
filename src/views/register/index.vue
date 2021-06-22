@@ -86,6 +86,7 @@
 
 <script>
 import { validUsername, validPass, validEmail } from '@/utils/validate'
+import { register } from '@/api/user'
 
 export default {
   name: 'Register',
@@ -123,8 +124,8 @@ export default {
       registerForm: {
         username: 'admin',
         email: '',
-        password: '111111',
-        confirm: ''
+        password: 'a111111',
+        confirm: 'a111111'
       },
       registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -169,10 +170,13 @@ export default {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/register', this.registerForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
+          register(this.temp).then(() => {
+            this.$message({
+              message: 'Register successfully',
+              type: 'success',
+              duration: 1500
+            })
+            this.$router.push({ path: '/login' })
             this.loading = false
           })
         } else {

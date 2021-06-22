@@ -47,3 +47,11 @@ export function validPass(value) {
   return reg.test(value)
 }
 
+/**
+ * 验证设备ID格式是否正确
+ */
+export function validDeviceID(value) {
+  const reg = /^device[0-9][0-9][0-9][0-9]$/
+  return reg.test(value)
+}
+

@@ -80,5 +80,17 @@ module.exports = [
         data: 'success'
       }
     }
+  },
+
+  // user register
+  {
+    url: '/vue-admin-template/user/register',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
   }
 ]

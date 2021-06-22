@@ -111,6 +111,11 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          this.$message({
+            message: 'Login successfully',
+            type: 'success',
+            duration: 1500
+          })
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
