@@ -16,12 +16,12 @@
     >
       <el-table-column align="center" label="设备ID" width="120">
         <template slot-scope="scope">
-          {{ scope.row.id }}
+          {{ scope.row.deviceId }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="设备名称" width="150">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          {{ scope.row.deviceName }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="经度" width="120">
@@ -47,7 +47,7 @@
       <el-table-column align="center" prop="created_at" label="最后上报时间" width="200">
         <template slot-scope="scope">
           <i class="el-icon-time" />
-          <span>{{ scope.row.timestamp }}</span>
+          <span>{{ scope.row.time }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
@@ -66,11 +66,11 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="设备ID" prop="id">
-          <el-input v-model="temp.id" />
+        <el-form-item label="设备ID" prop="deviceId">
+          <el-input v-model="temp.deviceId" />
         </el-form-item>
-        <el-form-item label="设备名称" prop="name">
-          <el-input v-model="temp.name" />
+        <el-form-item label="设备名称" prop="deviceName">
+          <el-input v-model="temp.deviceName" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -109,7 +109,7 @@ export default {
         callback(new Error('格式错误！正确示例：device0001'))
       } else {
         const findSameID = this.list.filter(item => {
-          return item.id === value
+          return item.deviceId === value
         })
         if (findSameID.length !== 0) {
           callback(new Error('您输入的设备ID已经存在！'))
@@ -129,27 +129,25 @@ export default {
         importance: undefined,
         title: undefined,
         type: undefined,
-        sort: '+id'
+        sort: '+deviceId'
       },
       temp: {
-        id: 'device0006',
-        name: 'GK8传感器',
-        info: 'No data',
+        deviceId: 'device0006',
+        deviceName: 'GK8传感器',
         value: 0,
         alert: 0,
         lng: 120.178562,
         lat: 30.146589,
-        timestamp: parseTime(new Date().getTime(), '{y}-{m}-{d} {h}:{i}')
+        time: parseTime(new Date().getTime(), '{y}-{m}-{d} {h}:{i}:{s}')
       },
       oldTemp: {
-        id: 'device0006',
-        name: 'GK8传感器',
-        info: 'No data',
+        deviceId: 'device0006',
+        deviceName: 'GK8传感器',
         value: 0,
         alert: 0,
         lng: 120.178562,
         lat: 30.146589,
-        timestamp: parseTime(new Date().getTime(), '{y}-{m}-{d} {h}:{i}')
+        time: parseTime(new Date().getTime(), '{y}-{m}-{d} {h}:{i}:{s}')
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -158,8 +156,8 @@ export default {
         create: '创建新设备'
       },
       rules: {
-        id: [{ required: true, trigger: 'blur', validator: validateID }],
-        name: [{ required: true, message: '该字段为必填！', trigger: 'blur' }]
+        deviceId: [{ required: true, trigger: 'blur', validator: validateID }],
+        deviceName: [{ required: true, message: '该字段为必填！', trigger: 'blur' }]
       }
     }
   },
@@ -173,7 +171,7 @@ export default {
         this.list = response.data.items
         this.total = this.list.length
         this.list.forEach((item, index, array) => {
-          item.timestamp = parseTime(item.timestamp, '{y}-{m}-{d} {h}:{i}')
+          item.time = parseTime(item.time, '{y}-{m}-{d} {h}:{i}:{s}')
         })
         this.listLoading = false
       })
@@ -182,7 +180,7 @@ export default {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['设备ID', '经度', '纬度', '值', '是否告警', '设备信息', '上报时间']
-        const filterVal = ['id', 'lng', 'lat', 'value', 'alert', 'info', 'timestamp']
+        const filterVal = ['deviceId', 'lng', 'lat', 'value', 'alert', 'info', 'time']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
@@ -194,14 +192,13 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        id: 'device0006',
-        name: 'GK8传感器',
-        info: 'No data',
+        deviceId: 'device0006',
+        deviceName: 'GK8传感器',
         value: 0,
         alert: 0,
         lng: 120.178562,
         lat: 30.146589,
-        timestamp: parseTime(new Date().getTime(), '{y}-{m}-{d} {h}:{i}')
+        time: parseTime(new Date().getTime(), '{y}-{m}-{d} {h}:{i}:{s}')
       }
     },
     handleCreate() {
@@ -216,7 +213,6 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           createEquipment(this.temp).then(() => {
-            this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -225,6 +221,7 @@ export default {
               duration: 2000
             })
           })
+          this.fetchData()
         }
       })
     },
@@ -240,16 +237,15 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempID = this.temp.id
-          const tempName = this.temp.name
+          const tempID = this.temp.deviceId
+          const tempName = this.temp.deviceName
           this.temp = Object.assign({}, this.oldTemp)
-          this.temp.id = tempID
-          this.temp.name = tempName
+          this.temp.deviceId = tempID
+          this.temp.deviceName = tempName
           const tempData = Object.assign({}, this.temp)
           const oldTempData = Object.assign({}, this.oldTemp)
-          updateEquipment(oldTempData, tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.oldTemp.id)
-            this.list.splice(index, 1, tempData)
+          updateEquipment({ oldId: oldTempData.deviceId, newId: tempData.deviceId, newName: tempData.deviceName }).then(() => {
+            this.fetchData()
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -262,19 +258,19 @@ export default {
       })
     },
     handleDelete(row, index) {
-      deleteEquipment(row.id).then(() => {
-        this.list.splice(index, 1)
+      deleteEquipment({ deviceId: row.deviceId }).then(() => {
         this.$notify({
           title: 'Success',
           message: '删除设备成功！',
           type: 'success',
           duration: 2000
         })
+        this.fetchData()
       })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
+        if (j === 'time') {
           return parseTime(v[j])
         } else {
           return v[j]

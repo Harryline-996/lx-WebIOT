@@ -1,14 +1,15 @@
 <template>
   <div class="dashboard-editor-container">
+    <el-button type="primary" icon="el-icon-refresh" @click="fetchData">刷新数据</el-button>
 
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+    <panel-group :count1="count1" :count2="count2" :count3="count3" :count4="count4" @handleSetLineChartData="handleSetLineChartData" />
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
+      <bar-chart :chart-data="NowChartData" />
     </el-row>
 
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <bar-chart :chart-data="lineChartData" />
+      <line-chart :chart-data="NowChartData" />
     </el-row>
 
   </div>
@@ -18,23 +19,29 @@
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
 import BarChart from './components/BarChart'
+import { getEquipmentStatistics } from '@/api/equipment'
+import { parseTime } from '@/utils'
 
-const lineChartData = {
+var ChartData = {
   total: {
     name: '设备总量',
-    actualData: [10, 11, 17, 15, 19, 20, 20]
+    time: [],
+    actualData: []
   },
   onlineTotal: {
     name: '在线总量',
-    actualData: [10, 11, 15, 15, 17, 20, 19]
+    time: [],
+    actualData: []
   },
   warningTotal: {
     name: '告警总量',
-    actualData: [5, 10, 2, 7, 3, 1, 4]
+    time: [],
+    actualData: []
   },
   dataTotal: {
     name: '总数据量',
-    actualData: [760, 800, 1200, 1270, 1300, 1200, 1360]
+    time: [],
+    actualData: []
   }
 }
 
@@ -47,12 +54,41 @@ export default {
   },
   data() {
     return {
-      lineChartData: lineChartData.total
+      NowChartData: ChartData.total,
+      timestamp: null,
+      count1: 0,
+      count2: 0,
+      count3: 0,
+      count4: 0
     }
   },
+  created() {
+    this.fetchData()
+  },
   methods: {
+    fetchData() {
+      getEquipmentStatistics().then(response => {
+        this.timestamp = response.data.timestamp
+        this.count1 = response.data.count1
+        this.count2 = response.data.count2
+        this.count3 = response.data.count3
+        this.count4 = response.data.count4
+        this.timestamp = parseTime(this.timestamp, '{h}:{i}:{s}')
+        // this.list.forEach((item, index, array) => {
+        //   item.time = parseTime(item.time, '{y}-{m}-{d} {h}:{i}:{s}')
+        // })
+        ChartData['total'].time.push(this.timestamp)
+        ChartData['total'].actualData.push(this.count1)
+        ChartData['onlineTotal'].time.push(this.timestamp)
+        ChartData['onlineTotal'].actualData.push(this.count2)
+        ChartData['warningTotal'].time.push(this.timestamp)
+        ChartData['warningTotal'].actualData.push(this.count3)
+        ChartData['dataTotal'].time.push(this.timestamp)
+        ChartData['dataTotal'].actualData.push(this.count4)
+      })
+    },
     handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
+      this.NowChartData = ChartData[type]
     }
   }
 }

@@ -59,8 +59,8 @@ export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (!validPass(value)) {
+        callback(new Error('用户名需要是6至20位的字母和数字的组合！'))
       } else {
         callback()
       }
@@ -74,7 +74,7 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
+        username: 'admin1',
         password: 'a111111'
       },
       loginRules: {
@@ -111,13 +111,13 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.$message({
-            message: 'Login successfully',
-            type: 'success',
-            duration: 1500
-          })
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
+            this.$message({
+              message: 'Login successfully',
+              type: 'success',
+              duration: 1500
+            })
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {

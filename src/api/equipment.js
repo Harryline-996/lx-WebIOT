@@ -1,24 +1,40 @@
 import request from '@/utils/request'
 
-export function getEquipmentInfo(params) {
+export function getEquipmentStatistics(params) {
   return request({
-    url: '/vue-admin-template/equipment/info',
+    url: '/equipment/statistics',
     method: 'get',
     params
   })
 }
 
-export function getEquipmentTrack(params) {
+export function getEquipmentMessage(params) {
   return request({
-    url: '/vue-admin-template/equipment/track',
+    url: '/equipment/message',
     method: 'get',
     params
+  })
+}
+
+export function getEquipmentInfo(params) {
+  return request({
+    url: '/equipment/info',
+    method: 'get',
+    params
+  })
+}
+
+export function getEquipmentTrack(data) {
+  return request({
+    url: '/equipment/track',
+    method: 'post',
+    data
   })
 }
 
 export function createEquipment(data) {
   return request({
-    url: '/vue-admin-template/equipment/create',
+    url: '/equipment/create',
     method: 'post',
     data
   })
@@ -26,17 +42,16 @@ export function createEquipment(data) {
 
 export function deleteEquipment(data) {
   return request({
-    url: '/vue-admin-template/equipment/delete',
+    url: '/equipment/delete',
     method: 'post',
     data
   })
 }
 
-export function updateEquipment(oldData, data) {
+export function updateEquipment(data) {
   return request({
-    url: '/vue-admin-template/equipment/update',
+    url: '/equipment/update',
     method: 'post',
-    oldData,
     data
   })
 }

@@ -63,7 +63,7 @@ export default {
       this.chart = echarts.init(this.$el, 'shine')
       this.setOptions(this.chartData)
     },
-    setOptions({ name, actualData } = {}) {
+    setOptions({ name, time, actualData } = {}) {
       this.chart.setOption({
         tooltip: {
           trigger: 'axis',
@@ -80,7 +80,7 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          data: ['0:00', '3:00', '6:00', '9:00', '12:00', '15:00', '18:00', '21:00', '24:00'],
+          data: time,
           axisTick: {
             alignWithLabel: true
           }

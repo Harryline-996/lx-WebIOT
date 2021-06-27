@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             设备总量
           </div>
-          <count-to :start-val="0" :end-val="20" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="count1" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             在线总量
           </div>
-          <count-to :start-val="0" :end-val="18" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="count2" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             告警总量
           </div>
-          <count-to :start-val="0" :end-val="10" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="count3" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             总数据量
           </div>
-          <count-to :start-val="0" :end-val="1360" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="count4" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -61,6 +61,20 @@ import CountTo from 'vue-count-to'
 export default {
   components: {
     CountTo
+  },
+  props: {
+    count1: {
+      type: Number
+    },
+    count2: {
+      type: Number
+    },
+    count3: {
+      type: Number
+    },
+    count4: {
+      type: Number
+    }
   },
   methods: {
     handleSetLineChartData(type) {

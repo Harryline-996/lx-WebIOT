@@ -2,16 +2,15 @@
   <div>
     <baidu-map v-show="showHistory === false" class="map" center="杭州" :scroll-wheel-zoom="true" :zoom="10">
       <bm-scale anchor="BMAP_ANCHOR_TOP_RIGHT" />
-      <bm-marker v-for="deviceItem in items" :key="deviceItem.id" :icon="deviceItem.alert === 1 ? {url:require('@/icons/png/warning.png'),size: {width: 48, height: 48}} : {url:require('@/icons/png/normal.png'),size: {width: 32, height: 32}}" :position="{lng: deviceItem.lng, lat: deviceItem.lat}" :title="deviceItem.id" @click="lookDetail(deviceItem)" />
+      <bm-marker v-for="deviceItem in items" :key="deviceItem.deviceId" :icon="deviceItem.alert === 1 ? {url:require('@/icons/png/warning.png'),size: {width: 48, height: 48}} : {url:require('@/icons/png/normal.png'),size: {width: 32, height: 32}}" :position="{lng: deviceItem.lng, lat: deviceItem.lat}" :title="deviceItem.deviceId" @click="lookDetail(deviceItem)" />
       <bm-info-window :position="position" :show="show" @close="infoWindowClose" @open="infoWindowOpen">
-        <p> 设备ID: {{ deviceItem.id }} </p>
-        <p> 设备名称: {{ deviceItem.name }} </p>
+        <p> 设备ID: {{ deviceItem.deviceId }} </p>
+        <p> 设备名称: {{ deviceItem.deviceName }} </p>
         <p> 是否告警: {{ deviceItem.alert ? '是' : '否' }} </p>
         <p> 经度: {{ deviceItem.lng }} </p>
         <p> 纬度: {{ deviceItem.lat }} </p>
         <p> 值: {{ deviceItem.value }} </p>
-        <p> 设备信息: {{ deviceItem.info }} </p>
-        <p> 上报时间: {{ deviceItem.timestamp }} </p>
+        <p> 上报时间: {{ deviceItem.time }} </p>
         <el-button type="primary" plain icon="el-icon-map-location" @click="handleTrack">
           查看历史轨迹
         </el-button>
@@ -74,7 +73,7 @@ export default {
     lookDetail(deviceItem) {
       this.position = { lng: deviceItem.lng, lat: deviceItem.lat }
       this.deviceItem = deviceItem
-      deviceItem.timestamp = parseTime(deviceItem.timestamp)
+      deviceItem.time = parseTime(deviceItem.time)
       this.show = true
     },
     fetchData() {
@@ -83,8 +82,8 @@ export default {
       })
     },
     handleTrack() {
-      getEquipmentTrack().then(response => {
-        this.path = response.data.points
+      getEquipmentTrack({ clientId: this.deviceItem.deviceId }).then(response => {
+        this.path = response.data.items
       })
       this.showHistory = true
     },

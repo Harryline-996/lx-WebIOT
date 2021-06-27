@@ -85,15 +85,15 @@
 </template>
 
 <script>
-import { validUsername, validPass, validEmail } from '@/utils/validate'
-import { register } from '@/api/user'
+import { validPass, validEmail } from '@/utils/validate'
+// import { register } from '@/api/user'
 
 export default {
   name: 'Register',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('用户名不存在！'))
+      if (!validPass(value)) {
+        callback(new Error('用户名需要是6至20位的字母和数字的组合！'))
       } else {
         callback()
       }
@@ -122,7 +122,7 @@ export default {
 
     return {
       registerForm: {
-        username: 'admin',
+        username: 'admin1',
         email: '',
         password: 'a111111',
         confirm: 'a111111'
@@ -170,14 +170,32 @@ export default {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
           this.loading = true
-          register(this.temp).then(() => {
+          // register({ username: this.registerForm.username, email: this.registerForm.email, password: this.registerForm.password })
+          this.$http.post('/dev-api/user/register', { username: this.registerForm.username, email: this.registerForm.email, password: this.registerForm.password }).then(res => {
+            const response = res.data
+            if (response.code !== 20000) {
+              this.$message({
+                message: response.message,
+                type: 'error',
+                duration: 1500
+              })
+              this.loading = false
+            } else {
+              this.$message({
+                message: 'Register successfully',
+                type: 'success',
+                duration: 1500
+              })
+              this.$router.push({ path: '/login' })
+              this.loading = false
+            }
+          }).catch(err => {
             this.$message({
-              message: 'Register successfully',
-              type: 'success',
+              message: '注册失败！',
+              type: 'error',
               duration: 1500
             })
-            this.$router.push({ path: '/login' })
-            this.loading = false
+            console.log(err)
           })
         } else {
           console.log('error submit!!')

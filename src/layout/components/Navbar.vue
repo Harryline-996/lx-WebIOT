@@ -52,6 +52,11 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
+      this.$message({
+        message: 'Logout successfully',
+        type: 'success',
+        duration: 1500
+      })
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
