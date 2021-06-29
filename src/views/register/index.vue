@@ -122,10 +122,10 @@ export default {
 
     return {
       registerForm: {
-        username: 'admin1',
+        username: '',
         email: '',
-        password: 'a111111',
-        confirm: 'a111111'
+        password: '',
+        confirm: ''
       },
       registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],

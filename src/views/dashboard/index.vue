@@ -62,6 +62,9 @@ export default {
       count4: 0
     }
   },
+  beforeCreate() {
+    this.fetchData()
+  },
   created() {
     this.fetchData()
   },

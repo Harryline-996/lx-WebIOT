@@ -1,90 +1,72 @@
-# vue-admin-template
+## 1 文件结构说明
 
-English | [简体中文](./README-zh.md)
+- report 文件夹：所有的文档，包括设计文档和系统文档，系统文档中又包含了使用手册、测试报告以及开发体会与小结
+- src 文件夹：源代码
+  - iotclient 文件夹：物联网设备模拟器工程文件夹，且在老师提供代码的基础上添加了接收相应数据并存储到本地MongoDB数据库的功能
+  
+  - lx-WebIOT 文件夹：物联网应用网站工程文件夹
+  
+    
 
-> A minimal vue admin template with Element UI & axios & iconfont & permission control & lint
+## 2 项目运行配置说明
 
-**Live demo:** http://panjiachen.github.io/vue-admin-template
+- 操作系统：Windows 10 64bit
+- 开发工具：IntelliJ IDEA 2020.2.1 x64 
+- 依赖环境
+  - [node.js  v14.16.1](http://nodejs.cn/download/current/)
+  - [JDK 1.8](https://www.oracle.com/cn/java/technologies/javase/javase-jdk8-downloads.html)
+  - [mosquitto-2.0.10](https://mosquitto.org/download/)
+  - [MongoDB-4.2.14](https://www.mongodb.com/try/download/community)
+  - [Maven 3.8.1](http://maven.apache.org/download.cgi)
 
 
-**The current version is `v4.0+` build on `vue-cli`. If you want to use the old version , you can switch branch to [tag/3.11.0](https://github.com/PanJiaChen/vue-admin-template/tree/tag/3.11.0), it does not rely on `vue-cli`**
 
-## Build Setup
+#### 2.1 运行物联网设备模拟器与接收器
 
-```bash
-# clone the project
-git clone https://github.com/PanJiaChen/vue-admin-template.git
+1. 启动mosquitto服务与MongoDB服务，最好是没有用户验证，如果有则需要修改iotclient中有关连接MQTT服务器和连接MongoDB数据库的代码
 
-# enter the project directory
-cd vue-admin-template
+2. 使用IntelliJ IDEA打开iotclient文件夹，或者直接在命令行进入该文件夹
 
-# install dependency
-npm install
+3. 在terminal中运行以下命令进行代码编译
 
-# develop
-npm run dev
-```
+   ``` java
+   mvn clean package
+   ```
 
-This will automatically open http://localhost:9528
+4. 进入代码编译生成的target文件夹，将iot.properties文件放在iotclient-1.0.0.jar同一目录，根据需求修改iot.properties配置，然后在terminal中运行以下命令来启动程序
 
-## Build
+   ``` java
+   java -jar iotclient-1.0.0.jar
+   ```
 
-```bash
-# build for test environment
-npm run build:stage
+5. 经过以上操作后，物联网设备模拟器将不断产生模拟数据，并存储到MongoDB数据库中
 
-# build for production environment
-npm run build:prod
-```
 
-## Advanced
 
-```bash
-# preview the release environment effect
-npm run preview
+#### 2.2 运行物联网网站
 
-# preview the release environment effect + static resource analysis
-npm run preview -- --report
+1. 使用IntelliJ IDEA打开lx-WebIOT文件夹，或者直接在命令行进入该文件夹
 
-# code format check
-npm run lint
+2. 在terminal中运行以下命令来安装项目依赖
 
-# code format check and auto fix
-npm run lint -- --fix
-```
+   ``` java
+   npm install
+   ```
 
-Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/guide/essentials/deploy.html) for more information
+3. 项目依赖安装完成后，在terminal中运行以下命令来使用webpack将前端项目打包为静态文件，生成dist目录
 
-## Demo
+   ``` java
+   npm run build:prod
+   ```
 
-![demo](https://github.com/PanJiaChen/PanJiaChen.github.io/blob/master/images/demo.gif)
+4. dist目录生成后，在terminal中运行以下命令来启动服务端
 
-## Extra
+   ```java
+   npm run start
+   ```
 
-If you want router permission && generate menu by user roles , you can use this branch [permission-control](https://github.com/PanJiaChen/vue-admin-template/tree/permission-control)
+5. 启动成功之后，访问http://localhost:3000/即可访问物联网应用网站
 
-For `typescript` version, you can use [vue-typescript-admin-template](https://github.com/Armour/vue-typescript-admin-template) (Credits: [@Armour](https://github.com/Armour))
 
-## Related Project
 
-- [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
-
-- [electron-vue-admin](https://github.com/PanJiaChen/electron-vue-admin)
-
-- [vue-typescript-admin-template](https://github.com/Armour/vue-typescript-admin-template)
-
-- [awesome-project](https://github.com/PanJiaChen/vue-element-admin/issues/2312)
-
-## Browsers support
-
-Modern browsers and Internet Explorer 10+.
-
-| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
-| --------- | --------- | --------- | --------- |
-| IE10, IE11, Edge| last 2 versions| last 2 versions| last 2 versions
-
-## License
-
-[MIT](https://github.com/PanJiaChen/vue-admin-template/blob/master/LICENSE) license.
-
-Copyright (c) 2017-present PanJiaChen
+> 注：没有提供MongoDB的建库建表文件，这是因为在运行物联网设备模拟器与接收器时，会自动建立iotdb数据库，equipments表和messages表。在运行物联网网站后如果进行注册，会自动建立users表。
